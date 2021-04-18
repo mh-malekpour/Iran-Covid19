@@ -2,9 +2,9 @@
 
 library(tidyverse)
 
-confirmed <- as_tibble(read_csv("time_series_covid19_confirmed_global.csv"))
-recoverd <- as_tibble(read_csv("time_series_covid19_recovered_global.csv"))
-deaths <- as_tibble(read_csv("time_series_covid19_deaths_global.csv"))
+confirmed <- as_tibble(read_csv("csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"))
+recoverd <- as_tibble(read_csv("csse_covid_19_time_series/time_series_covid19_recovered_global.csv"))
+deaths <- as_tibble(read_csv("csse_covid_19_time_series/time_series_covid19_deaths_global.csv"))
 
 confirmed_ir =  filter(confirmed, `Country/Region` == "Iran")
 recoverd_ir =  filter(recoverd, `Country/Region` == "Iran") 
@@ -14,21 +14,21 @@ deaths_ir =  filter(deaths, `Country/Region` == "Iran")
 # Wrangling
 
 confirmed_ir %>% 
-  gather(key = "date", value = "count", `1/22/20`:`9/24/20`) %>% 
+  gather(key = "date", value = "count", `1/22/20`:`4/16/21`) %>% 
   mutate(lable = "confirmed",
          count = c(count[1] , diff(count)),
          date=as.Date(date, format = "%m/%d/%y")) %>% 
   select(date, lable, count) -> confirmed_ir
 
 recoverd_ir %>% 
-  gather(key = "date", value = "count", `1/22/20`:`9/24/20`) %>%
+  gather(key = "date", value = "count", `1/22/20`:`4/16/21`) %>%
   mutate(lable = "recoverd" ,
          count = c(count[1] , diff(count)),
          date=as.Date(date, format = "%m/%d/%y")) %>% 
   select(date, lable, count) -> recoverd_ir
 
 deaths_ir %>% 
-  gather(key = "date", value = "count", `1/22/20`:`9/24/20`) %>%
+  gather(key = "date", value = "count", `1/22/20`:`4/16/21`) %>%
   mutate(lable = "death",
          count = c(count[1] , diff(count)),
          date=as.Date(date, format = "%m/%d/%y")) %>% 
@@ -83,7 +83,7 @@ p3 <- ggplot(data = deaths_ir, aes(x = date, y = count)) +
   geom_line(color = "#00AFBB", size = 1) +
   stat_smooth(color = "#FC4E07", fill = "#FC4E07", method = "loess") +
   scale_x_date(labels = date_format("%b"), breaks = date_breaks("1 month")) +
-  scale_y_continuous(breaks = seq(0, 300, by = 50)) +
+  scale_y_continuous(breaks = seq(0, 600, by = 100)) +
   labs(
     x = 'Date',
     y = 'Count',
@@ -96,13 +96,13 @@ p4 <- ggplot(covid_ir, aes(x = date, y = count)) +
   geom_line(aes(color = lable), size = 1) +
   scale_color_manual(values = c("#00AFBB",  "#bf1313", "#E7B800")) +
   scale_x_date(labels = date_format("%b"), breaks = date_breaks("1 month")) +
-  scale_y_continuous(breaks = seq(0, 7000, by = 1000)) +
+  scale_y_continuous(breaks = seq(0, 26000, by = 5000)) +
   theme_minimal() +
   labs(
     x = 'Date',
     y = 'Count',
-    title = 'IR COVID-19',
-    subtitle = 'Last Updated at 9/24/2020',
+    title = 'IRAN COVID-19',
+    subtitle = 'Last Updated at 16/04/2021',
     caption = 'Mohammad Hossein Malekpour',
     color = 'Case')
 
